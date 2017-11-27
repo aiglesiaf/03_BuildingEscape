@@ -8,9 +8,10 @@
 */DerivedDataCache/
 */Intermediate/
 */Saved/
-BuildingEscape/Content/StarterContent/
+*/Content/StarterContent/
 
 ######################
 # VS Generated Files #
 ######################
 *.VC.db
+*/.vs/
