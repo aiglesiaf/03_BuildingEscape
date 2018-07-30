@@ -3,6 +3,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Engine/TriggerVolume.h"
 #include "Engine/World.h"
 #include "Engine/LocalPlayer.h"
@@ -29,6 +30,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
 private:
 	UPROPERTY(EditAnywhere)
 	float OpenAngle=90.f;
@@ -40,11 +42,12 @@ private:
 	float OpenDoorDelayInSec=2.f;
 	
 	float DoorOpenLastTime=0;
-	AActor* CurrentActor;
+	//AActor* CurrentActor;
 	AActor *DoorOwner = GetOwner();
 	float OpenDoorAngle = 90.f;
 	bool IsDoorOpen = false;
+	float WeightToOpenDoors = 16.f;
 
-		
+	float GetTotalMassOfActorsOnPlate();
 	
 };

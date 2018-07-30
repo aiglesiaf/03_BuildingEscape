@@ -17,3 +17,5 @@
 *.VC.db
 */.vs/
 .suo
+*.sln
+*.VC.opendb

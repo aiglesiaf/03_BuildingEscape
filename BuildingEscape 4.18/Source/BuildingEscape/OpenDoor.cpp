@@ -20,9 +20,8 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	//OpenDoor();
-	CurrentActor = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
-	const FString ObjectName = CurrentActor->GetFullName();
+	//const FString ObjectName = CurrentActor->GetFullName();
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentActor: %"), *ObjectName);
 }
 
@@ -60,13 +59,38 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// THIS IS THE CODE THAT IS CAUSING THE UE CRASHING. PressurePlatform WAS NOT FILLED IN IN THE UI!!!!!!!!!!!!!! 
 	//if (IsDoorOpen == false)
 
-	if (IsDoorOpen == false && PressurePlatform->IsOverlappingActor(CurrentActor))
+	if (IsDoorOpen == false && GetTotalMassOfActorsOnPlate() > WeightToOpenDoors)
 	{
 		OpenDoor();
 	}
-	else if(IsDoorOpen == true && !PressurePlatform->IsOverlappingActor(CurrentActor) && DoorOpenLastTime + OpenDoorDelayInSec < GetWorld()->GetTimeSeconds())
+	else if(IsDoorOpen == true 
+		&& GetTotalMassOfActorsOnPlate() <= WeightToOpenDoors
+		&& DoorOpenLastTime + OpenDoorDelayInSec < GetWorld()->GetTimeSeconds())
 	{
+		const FString ObjMass = FString::FromInt(GetTotalMassOfActorsOnPlate());
+		UE_LOG(LogTemp, Warning, TEXT("Total mass : %s "), *ObjMass);
 		CloseDoor();
 	}
+}
+
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
+{
+	// PressurePlatform->IsOverlappingActor(CurrentActor)
+	TArray<AActor *> OverlappingActors;
+	float result = 0;
+	PressurePlatform->GetOverlappingActors(OverlappingActors);
+	for (AActor* actor: OverlappingActors)
+	{
+		TArray<UStaticMeshComponent*> meshComponents;
+		actor->GetComponents<UStaticMeshComponent>(meshComponents);
+		for (UStaticMeshComponent* mesh : meshComponents)
+		{
+			FBodyInstance* BodyInst = mesh->GetBodyInstance();
+			if (!BodyInst) break;
+			result += BodyInst->GetBodyMass();
+		}
+	}
+	return result;
 }
 

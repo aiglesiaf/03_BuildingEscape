@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"	
 #include "Grabber.generated.h"
 
@@ -32,4 +33,11 @@ private:
 	UPhysicsHandleComponent* PhysicsHandle;	
 	UInputComponent* InputComponent;
 	virtual void Grab();
+	virtual void Release();
+	void LoadPhysicsHandle();
+	void LoadInputComponent();
+	FHitResult GetFirstPhysicsBodyInReach();
+	FVector GetReachLineEnd();
+	FVector GetReachLineStart();
+
 };
