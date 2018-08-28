@@ -19,36 +19,16 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
+	if(!PressurePlatform)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PressurePlatform in %s not found!!"), *(GetOwner()->GetName()))
+	}
 	//OpenDoor();
 	
 	//const FString ObjectName = CurrentActor->GetFullName();
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentActor: %"), *ObjectName);
 }
 
-void UOpenDoor::OpenDoor()
-{
-
-	FRotator Rotator = FRotator(0.f, OpenDoorAngle, 0.f);
-
-	DoorOwner->SetActorRotation(Rotator);
-	IsDoorOpen = true;
-	DoorOpenLastTime = GetWorld()->GetTimeSeconds();
-	const FString ObjDoorOpenTime = FString::FromInt(GetWorld()->GetTimeSeconds());
-	UE_LOG(LogTemp, Warning, TEXT("DoorOpenLastTime: %s "), *ObjDoorOpenTime);
-
-}
-
-void UOpenDoor::CloseDoor()
-{
-	if (IsDoorOpen == true)
-	{
-		FRotator Rotator = FRotator(0.f, 180.f, 0.f);
-
-		DoorOwner->SetActorRotation(Rotator);
-		IsDoorOpen = false;
-	}
-
-}
 
 
 // Called every frame
@@ -59,17 +39,15 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// THIS IS THE CODE THAT IS CAUSING THE UE CRASHING. PressurePlatform WAS NOT FILLED IN IN THE UI!!!!!!!!!!!!!! 
 	//if (IsDoorOpen == false)
 
-	if (IsDoorOpen == false && GetTotalMassOfActorsOnPlate() > WeightToOpenDoors)
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass)
 	{
-		OpenDoor();
+		OnOpen.Broadcast();
 	}
-	else if(IsDoorOpen == true 
-		&& GetTotalMassOfActorsOnPlate() <= WeightToOpenDoors
-		&& DoorOpenLastTime + OpenDoorDelayInSec < GetWorld()->GetTimeSeconds())
+	else
 	{
 		const FString ObjMass = FString::FromInt(GetTotalMassOfActorsOnPlate());
 		UE_LOG(LogTemp, Warning, TEXT("Total mass : %s "), *ObjMass);
-		CloseDoor();
+		OnClose.Broadcast();
 	}
 }
 
@@ -79,6 +57,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 	// PressurePlatform->IsOverlappingActor(CurrentActor)
 	TArray<AActor *> OverlappingActors;
 	float result = 0;
+	if (!PressurePlatform) { return 0; }
 	PressurePlatform->GetOverlappingActors(OverlappingActors);
 	for (AActor* actor: OverlappingActors)
 	{

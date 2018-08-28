@@ -33,6 +33,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// PhysicsHandle can 'grab' and 'release' components
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		// SetTargetLocation set the position of the grabbed component
@@ -67,7 +68,7 @@ void UGrabber::Grab()
 		//PhysicsHandle->GrabComponentAtLocation(ComponentToGrab,
 		//	NAME_None,
 		//	ComponentToGrab->GetOwner()->GetActorLocation());
-
+		if (!PhysicsHandle) { return; }
 		PhysicsHandle->GrabComponent(ComponentToGrab,
 			NAME_None,
 			ComponentToGrab->GetOwner()->GetActorLocation(),
@@ -78,6 +79,7 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Releasing!! "))
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->ReleaseComponent();

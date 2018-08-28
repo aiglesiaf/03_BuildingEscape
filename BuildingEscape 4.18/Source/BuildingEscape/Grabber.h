@@ -30,8 +30,8 @@ public:
 
 private:
 	float RangeDebugRay = 100.f;
-	UPhysicsHandleComponent* PhysicsHandle;	
-	UInputComponent* InputComponent;
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;	
+	UInputComponent* InputComponent = nullptr;
 	virtual void Grab();
 	virtual void Release();
 	void LoadPhysicsHandle();
